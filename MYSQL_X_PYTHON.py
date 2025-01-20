@@ -21,112 +21,134 @@ import os
 
 def akk():
 
+    ##################################################################################################################################################################################################
+    ##################################################################################################################################################################################################
+    ##################################################################################################################################################################################################
     def ALTER():
 
-        def connect_to_db(database_name):
+        # Function to connect to MySQL database
+        def connect_to_db():
             try:
                 connection = mysql.connector.connect(
                     host="localhost",
                     user="root",
                     password=password,
-                    database=database_name
+                    database=database_var1.get() if database_var1.get() else None
                 )
                 return connection
             except mysql.connector.Error as err:
-                messagebox.showerror("Connection Error", f"Error: {err}")
+                messagebox.showerror("Database Error", f"Error: {err}",parent=root)
                 return None
 
-        # Connect to MySQL server
-        def connect_to_mysql():
-            try:
-                connection = mysql.connector.connect(
-                    host="localhost",
-                    user="root",
-                    password=password
-                )
-                return connection
-            except mysql.connector.Error as err:
-                messagebox.showerror("Connection Error", f"Error: {err}")
-                return None
-       
-        
-            
-        
-        
-        
-        def alt():
-            # Execute the query
-            connection = connect_to_db(selected_database)
-            if connection:
-                cursor = connection.cursor()
-              
-                cursor.execute(queryy)
-                connection.commit()
-                messagebox.showinfo("Success", "Table altered successfully!")
-                
-
-            
-
-        
-        # Function to dynamically display input fields based on selected operation
-        def display_fields(*args):
-            global queryy
-
-            
-            
-
-            # Hide all fields first
-            for widget in dynamic_fields_frame.winfo_children():
-                widget.grid_forget()
-            selected_operation = database_var.get()
-
-
+        # Function to execute the ALTER TABLE commands
+        def alter_table():
+            selected_operation = operation_var.get()
             table_name = table_var.get()
             
-            
-            # Dynamically adjust fields and generate query
-            if selected_operation == "Add Column" or selected_operation == "Modify Column":
-                Label(dynamic_fields_frame, text="Column Name:").grid(row=2, column=0)
-                column_name_entry.grid(row=2, column=1)
-                Label(dynamic_fields_frame, text="Column Type:").grid(row=3, column=0)
-                column_type_entry.grid(row=3, column=1)
-              
-                if column_type_entry :
-                    column_name = column_name_entry.get()
-                    column_type = column_type_entry.get()
-                    queryy = f"ALTER TABLE {table_name} ADD {column_name} {column_type};"
-                    print(queryy)
-                elif selected_operation == "Modify Column":
-                    queryy = f"ALTER TABLE {table_name} MODIFY {column_name} {column_type};"
-
-            elif selected_operation == "Drop Column":
-                Label(dynamic_fields_frame, text="Column Name:").grid(row=2, column=0)
-                column_name_entry.grid(row=2, column=1)
+            if selected_operation == "Add Column":
                 column_name = column_name_entry.get()
-                queryy = f"ALTER TABLE {table_name} DROP COLUMN {column_name};"
-
+                column_type = column_type_entry.get()
+                query = f"ALTER TABLE {table_name} ADD {column_name} {column_type};"
+            
+            elif selected_operation == "Modify Column":
+                column_name = column_name_entry.get()
+                new_column_type = column_type_entry.get()
+                query = f"ALTER TABLE {table_name} MODIFY {column_name} {new_column_type};"
+            
+            elif selected_operation == "Drop Column":
+                column_name = column_name_entry.get()
+                query = f"ALTER TABLE {table_name} DROP COLUMN {column_name};"
+            
             elif selected_operation == "Rename Column":
-                Label(dynamic_fields_frame, text="Old Column Name:").grid(row=2, column=0)
-                old_column_name_entry.grid(row=2, column=1)
-                Label(dynamic_fields_frame, text="New Column Name:").grid(row=3, column=0)
-                new_column_name_entry.grid(row=3, column=1)
                 old_column_name = old_column_name_entry.get()
                 new_column_name = new_column_name_entry.get()
-                queryy = f"ALTER TABLE {table_name} RENAME COLUMN {old_column_name} TO {new_column_name};"
-
+                query = f"ALTER TABLE {table_name} RENAME COLUMN {old_column_name} TO {new_column_name};"
+            
             elif selected_operation == "Rename Table":
-                Label(dynamic_fields_frame, text="New Table Name:").grid(row=2, column=0)
-                new_table_name_entry.grid(row=2, column=1)
                 new_table_name = new_table_name_entry.get()
-                queryy = f"ALTER TABLE {table_name} RENAME TO {new_table_name};"
-                
-            confrim_button.grid()
+                query = f"ALTER TABLE {table_name} RENAME TO {new_table_name};"
             
+            elif selected_operation == "Add Primary Key":
+                column_name = column_name_entry.get()
+                query = f"ALTER TABLE {table_name} ADD PRIMARY KEY ({column_name});"
             
+            elif selected_operation == "Add Foreign Key":
+                column_name = column_name_entry.get()
+                referenced_table = ref_table_entry.get()
+                referenced_column = ref_column_entry.get()
+                query = f"""
+                    ALTER TABLE {table_name}
+                    ADD CONSTRAINT fk_{column_name}
+                    FOREIGN KEY ({column_name})
+                    REFERENCES {referenced_table}({referenced_column});
+                    """
+            else:
+                messagebox.showwarning("Invalid Operation", "Please select a valid operation.",parent=root)
+                return
+            
+            # Execute the query
+            connection = connect_to_db()
+            if connection:
+                cursor = connection.cursor()
+                try:
+                    cursor.execute(query)
+                    connection.commit()
+                    messagebox.showinfo("Success", "Table altered successfully!",parent=root)
+                except mysql.connector.Error as err:
+                    messagebox.showerror("SQL Error", f"Error: {err}",parent=root)
+                finally:
+                    cursor.close()
+                    connection.close()
 
-        # Function to get and populate databases
+        # Function to dynamically display input fields based on selected operation
+        def display_fields(*args):
+            # Hide all fields first
+            for widget in dynamic_fields_frame.winfo_children():
+                widget.pack_forget()
+
+            selected_operation = operation_var.get()
+
+            # Show relevant fields for each operation
+            
+            table_name_entry = Label(dynamic_fields_frame, text='SELECT TABLE')
+            table_name_entry.pack()
+            table_dropdown1.pack()
+
+            if selected_operation == "Add Column" or selected_operation == "Modify Column":
+                Label(dynamic_fields_frame, text="Column Name:").pack()
+                column_name_entry.pack()
+                Label(dynamic_fields_frame, text="Column Type:").pack()
+                column_type_entry.pack()
+            
+            elif selected_operation == "Drop Column":
+                Label(dynamic_fields_frame, text="Column Name:").pack()
+                column_name_entry.pack()
+            
+            elif selected_operation == "Rename Column":
+                Label(dynamic_fields_frame, text="Old Column Name:").pack()
+                old_column_name_entry.pack()
+                Label(dynamic_fields_frame, text="New Column Name:").pack()
+                new_column_name_entry.pack()
+            
+            elif selected_operation == "Rename Table":
+                Label(dynamic_fields_frame, text="New Table Name:").pack()
+                new_table_name_entry.pack()
+            
+            elif selected_operation == "Add Primary Key":
+                Label(dynamic_fields_frame, text="Column Name:").pack()
+                column_name_entry.pack()
+            
+            elif selected_operation == "Add Foreign Key":
+                Label(dynamic_fields_frame, text="Column Name:").pack()
+                column_name_entry.pack()
+                Label(dynamic_fields_frame, text="Referenced Table:").pack()
+                ref_table_entry.pack()
+                Label(dynamic_fields_frame, text="Referenced Column:").pack()
+                ref_column_entry.pack()
+
+        # Function to get databases
         def get_databases1():
-            mydb = connect_to_mysql()
+            mydb = connect_to_db()
             if mydb is not None:
                 cursor = mydb.cursor()
                 cursor.execute("SHOW DATABASES")
@@ -134,10 +156,9 @@ def akk():
                 cursor.close()
                 mydb.close()
                 return databases
-            return []  # Return empty list if connection fails
-        # Function to get and populate tables for a selected database
+            return [] 
         def get_and_populate_tables(database_name):
-            mydb = connect_to_mysql()
+            mydb = connect_to_db()
             if mydb is not None:
                 cursor = mydb.cursor()
                 cursor.execute(f"USE {database_name}")
@@ -147,67 +168,69 @@ def akk():
                 mydb.close()
                 table_dropdown1['values'] = tables
             else:
-                messagebox.showerror("Error", "Error connecting to the database.")
+                messagebox.showerror("Error", "Error connecting to the database.",parent=root)
                 return
         def on_database_select(event):
             global selected_database
             selected_database = database_var1.get()
             if selected_database:
                 get_and_populate_tables(selected_database)
+
+        # Tkinter GUI Setup
+        root = Tk()
+        icon_path="speeds.ico"
+        root.wm_iconbitmap(icon_path)
+        root.title("ALTER YOUR TABLE")
+        root.geometry('670x530')
         
-        # Main window setup
-        alter_window = Tk()
-        alter_window.wm_iconbitmap("speeds.ico")
-        alter_window.title("ALTER TABLE")
-        alter_window.geometry('670x530')
-
-
-        # Dropdown for databases
-        databaselable = Label(alter_window, text='SELECT DATABASE')
-        databaselable.pack()
-        database_var1 = StringVar(alter_window)
-        database_dropdown = ttk.Combobox(alter_window, textvariable=database_var1)
+        # Dropdown for selecting a database
+        Label(root, text="Select Database:").pack()
+        database_var1 = StringVar(root)
+        database_dropdown = ttk.Combobox(root, textvariable=database_var1)
         database_dropdown["values"] = get_databases1()
         database_dropdown.pack()
 
 
-        # Dropdown for tables
-        tablelable = Label(alter_window, text='SELECT TABLE')
-        tablelable.pack()
-        table_var = StringVar(alter_window)
-        table_dropdown1 = ttk.Combobox(alter_window, textvariable=table_var)
-        table_dropdown1.pack()
-        database_dropdown.bind("<<ComboboxSelected>>", on_database_select)
+        operation_var1 = Label(root,text='SELECT OPERATIONS')
+        operation_var1.pack()
+        operation_var = StringVar(root)
+        operation_menu = ttk.Combobox(root, textvariable=operation_var)
+        operation_menu['values'] = ["Add Column", "Modify Column", "Drop Column", "Rename Column", "Rename Table", "Add Primary Key", "Add Foreign Key"]
+        operation_menu.pack()
 
-
-        # Dropdown for ALTER functions
-        ALTERFUNCITONlable = Label(alter_window, text='SELECT ALTER FUNCTION')
-        ALTERFUNCITONlable.pack()
-        database_var = StringVar(alter_window)
-        database_dropdown = ttk.Combobox(alter_window, textvariable=database_var)
-        database_dropdown["values"] = [
-            "Add Column", "Modify Column", "Drop Column", "Rename Column", "Rename Table"]
-        database_dropdown.pack()
-        database_var.trace("w", display_fields)
         # Frame for dynamic fields
-        dynamic_fields_frame = Frame(alter_window)
+        dynamic_fields_frame = Frame(root)
         dynamic_fields_frame.pack()
+
         # Define entries (initially hidden)
         
+        table_var = StringVar(dynamic_fields_frame)
+        table_dropdown1 = ttk.Combobox(dynamic_fields_frame, textvariable=table_var)
+        database_dropdown.bind("<<ComboboxSelected>>", on_database_select)
+
         column_name_entry = Entry(dynamic_fields_frame)
         column_type_entry = Entry(dynamic_fields_frame)
         old_column_name_entry = Entry(dynamic_fields_frame)
         new_column_name_entry = Entry(dynamic_fields_frame)
         new_table_name_entry = Entry(dynamic_fields_frame)
+        ref_table_entry = Entry(dynamic_fields_frame)
+        ref_column_entry = Entry(dynamic_fields_frame)
+
+        # Update the fields when a new operation is selected
+        operation_var.trace("w", display_fields)
+
+        # Alter Table button
+        Button(root, text="Alter Table", command=alter_table).pack()
+
+        root.mainloop()
         
-        confrim_button=Button(dynamic_fields_frame,text='ALTER',command=alt)
-
-        alter_window.mainloop()
-        
 
 
 
-    #for creating table....
+
+    ##################################################################################################################################################################################################
+    ##################################################################################################################################################################################################
+    #for creating table....##################################################################################################################################################################################################
     def createable():
         connection = c.connect(host='localhost', user='root', passwd=password)
         cursor = connection.cursor()
@@ -379,12 +402,12 @@ def akk():
 
 
 
-    
+    ##################################################################################################################################################################################################
+    ##################################################################################################################################################################################################
+    ##################################################################################################################################################################################################
+   
+   
     #inserting data.......................................................................................................................
-    
-    
-    
-    
     def connect_to_db(database):
         return mysql.connector.connect(
             host="localhost",
@@ -710,12 +733,100 @@ def akk():
 
 
 
-    #main window#
     root = Tk()
     root.title("MYSQL X PYTHON")
-    root.geometry('1920x1079')
     icon_path="speeds.ico"
     root.wm_iconbitmap(icon_path)
+    
+    
+    ####################
+    #CANVAS'S
+    ####################
+
+    color_for_text='magenta'
+
+
+
+
+
+    canvass = Canvas(root,width=1920,height=1079) 
+    background=ImageTk.PhotoImage(file='bg.jpg')
+    canvass.create_image(-50, -50, image=background, anchor="nw")
+    
+    
+    #HEADINGS FOR ALL SECTION
+
+    canvass.create_text(230,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
+    canvass.pack()
+
+    canvass.create_text(580,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
+    canvass.pack()
+
+    canvass.create_text(965,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
+    canvass.pack()
+
+
+    canvass.create_text(1320,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
+    canvass.pack()
+
+    canvass.create_text(225,542,text='THIS SECTION IS FOR \n  CREATING A TABLE, \nCLICK ON CREATE TABLE',font=('Courier',16,'bold'),fill=color_for_text)
+    canvass.pack()
+
+
+    #MAIN WINDOWS'S LABLES
+
+    color_for_text1='yellow'
+
+
+    canvass.create_text(220,112,text='SELECT DATABASE',font=('times',12,'bold'),fill=color_for_text1)
+    canvass.pack()
+    canvass.create_text(220,264,text='SELECT TABLE',font=('times',12,'bold'),fill=color_for_text1)
+    canvass.pack()
+
+    ######################
+    # Get the screen dimensions
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+
+    # Set the root window size based on the screen dimensions
+    root.geometry(f"{screen_width}x{screen_height}")
+
+    # Set the frame color
+    color = 'yellow'
+
+    # Function to create vertical frames
+    def create_vertical_frames(relative_x_positions, width_ratio=0.005, height_ratio=1):
+        for x_ratio in relative_x_positions:
+            x_position = int(screen_width * x_ratio)
+            frame_width = int(screen_width * width_ratio)
+            frame_height = int(screen_height * height_ratio)
+            Frame(root, width=frame_width, height=frame_height, bg=color).place(x=x_position)
+
+    # Function to create horizontal frames
+    def create_horizontal_frames(relative_y_positions, start_x_ratio, width_ratio, height_ratio=0.005):
+        for y_ratio in relative_y_positions:
+            y_position = int(screen_height * y_ratio)
+            x_position = int(screen_width * start_x_ratio)
+            frame_width = int(screen_width * width_ratio)
+            frame_height = int(screen_height * height_ratio)
+            Frame(root, width=frame_width, height=frame_height, bg=color).place(x=x_position, y=y_position)
+
+    # Vertical frames (x positions as a ratio of screen width)
+    vertical_positions = [0.03, 0.26, 0.27, 0.49, 0.53, 0.75, 0.76, 0.98]
+    create_vertical_frames(vertical_positions)
+
+    # Horizontal frames (y positions as a ratio of screen height)
+    horizontal_positions_top = [0.08]  # Single row for the top
+    horizontal_positions_bottom = [0.5, 0.58]  # Rows for the bottom
+    create_horizontal_frames(horizontal_positions_top, start_x_ratio=0.03, width_ratio=0.23)
+    create_horizontal_frames(horizontal_positions_top, start_x_ratio=0.27, width_ratio=0.22)
+    create_horizontal_frames(horizontal_positions_top, start_x_ratio=0.53, width_ratio=0.22)
+    create_horizontal_frames(horizontal_positions_top, start_x_ratio=0.76, width_ratio=0.22)
+    create_horizontal_frames(horizontal_positions_bottom, start_x_ratio=0.03, width_ratio=0.23)
+    create_horizontal_frames(horizontal_positions_bottom, start_x_ratio=0.27, width_ratio=0.22)
+
+    # Horizontal frame at the very top
+    Frame(root, width=screen_width, height=5, bg=color).place(x=0, y=0)
 
 
 
@@ -792,83 +903,6 @@ def akk():
     root.bind('<Motion>', show_exit_button)
 
     #FULLSCREEN FEATURES ENDING ##############################################
-
-
-
-
-
-
-    ####################
-    #CANVAS'S
-    ####################
-
-    color_for_text='magenta'
-
-
-
-
-
-    canvass = Canvas(root,width=1920,height=1079) 
-    background=ImageTk.PhotoImage(file='bg.jpg')
-    canvass.create_image(-50, -50, image=background, anchor="nw")
-    
-    
-    #HEADINGS FOR ALL SECTION
-
-    canvass.create_text(230,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
-    canvass.pack()
-
-    canvass.create_text(580,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
-    canvass.pack()
-
-    canvass.create_text(965,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
-    canvass.pack()
-
-
-    canvass.create_text(1320,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
-    canvass.pack()
-
-    canvass.create_text(225,542,text='THIS SECTION IS FOR \n  CREATING A TABLE, \nCLICK ON CREATE TABLE',font=('Courier',16,'bold'),fill=color_for_text)
-    canvass.pack()
-
-
-    #MAIN WINDOWS'S LABLES
-
-    color_for_text1='yellow'
-
-
-    canvass.create_text(220,112,text='SELECT DATABASE',font=('times',12,'bold'),fill=color_for_text1)
-    canvass.pack()
-    canvass.create_text(220,264,text='SELECT TABLE',font=('times',12,'bold'),fill=color_for_text1)
-    canvass.pack()
-
-    ######################
-
-
-
-
-    ###############
-    #FRAMES
-    ###############
-    color='yellow'
-    Frame(root,width=5,height=1000,bg=color).place(x=50)
-    Frame(root,width=5,height=1000,bg=color).place(x=390)
-    Frame(root,width=5,height=1000,bg=color).place(x=408)
-    Frame(root,width=5,height=1000,bg=color).place(x=740)
-    Frame(root,width=5,height=1000,bg=color).place(x=790)
-    Frame(root,width=5,height=1000,bg=color).place(x=1479)
-    Frame(root,width=5,height=1000,bg=color).place(x=1143)
-    Frame(root,width=5,height=1000,bg=color).place(x=1124)
-    Frame(root,width=2000,height=5,bg=color).place(x=0,y=0)
-    Frame(root,width=340,height=5,bg=color).place(x=50,y=80)
-    Frame(root,width=337,height=5,bg=color).place(x=408,y=80)
-    Frame(root,width=337,height=5,bg=color).place(x=792,y=80)
-    Frame(root,width=337,height=5,bg=color).place(x=1147,y=80)
-    Frame(root,width=340,height=5,bg=color).place(x=50,y=500)
-    Frame(root,width=340,height=5,bg=color).place(x=50,y=580)
-    Frame(root,width=337,height=5,bg=color).place(x=408,y=500)
-    Frame(root,width=337,height=5,bg=color).place(x=408,y=580)
-    #FRAMES END ### 
 
 
 
@@ -1038,9 +1072,11 @@ def akk():
     ownquery.place(x=120,y=450)
     #end..............................
 
+   
+
+
+    # Run the main loop
     root.mainloop()
-
-
 
 
 
