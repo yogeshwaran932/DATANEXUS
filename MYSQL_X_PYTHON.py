@@ -20,7 +20,33 @@ import os
 
 
 def akk():
+    
+    ##################################################################################################################################################################################################
+    ##################################################################################################################################################################################################
+    ##################################################################################################################################################################################################
+    #database creating..........'
 
+    def cdb():
+        try:                
+            cdn = c.connect(host = 'localhost', user = 'root', passwd = password)
+        except mysql.connector.Error as err:
+            messagebox.showerror('ERROR',f'DATABASE CONNECTIVITY ISSUE {err}')
+        
+        if cdn:
+            database_name = dbn.get()
+            try:
+                cur = cdn.cursor()
+                query = f'create database {database_name}'
+                cur.execute(query)
+                cdn.commit()
+                messagebox.showinfo('SUCCESS',f"THE DATABASE '{database_name}' HAS BEEN CREATED SUCCESSFULLY")
+            except mysql.connector.Error as err:
+                messagebox.showerror('ERROR',f'CANNOT CREATE DATABASE{err}')
+                
+            finally:
+                cur.close()
+                cdn.close()
+       
     ##################################################################################################################################################################################################
     ##################################################################################################################################################################################################
     ##################################################################################################################################################################################################
@@ -756,17 +782,17 @@ def akk():
     
     #HEADINGS FOR ALL SECTION
 
-    canvass.create_text(230,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
+    canvass.create_text(230,39,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
     canvass.pack()
 
-    canvass.create_text(580,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
+    canvass.create_text(589,39,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
     canvass.pack()
 
-    canvass.create_text(965,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
+    canvass.create_text(989,39,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
     canvass.pack()
 
 
-    canvass.create_text(1320,45,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
+    canvass.create_text(1350,39,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
     canvass.pack()
 
     canvass.create_text(225,542,text='THIS SECTION IS FOR \n  CREATING A TABLE, \nCLICK ON CREATE TABLE',font=('Courier',16,'bold'),fill=color_for_text)
@@ -781,6 +807,8 @@ def akk():
     canvass.create_text(220,112,text='SELECT DATABASE',font=('times',12,'bold'),fill=color_for_text1)
     canvass.pack()
     canvass.create_text(220,264,text='SELECT TABLE',font=('times',12,'bold'),fill=color_for_text1)
+    canvass.pack()
+    canvass.create_text(590,112,text='DATABASE NAME',font=('times',12,'bold'),fill=color_for_text1)
     canvass.pack()
 
     ######################
@@ -1019,8 +1047,8 @@ def akk():
 
     #not DESIDED entries...............
     dbn =Entry(root, width=30)
-    dbn.place(x=455,y=100)
-
+    dbn.place(x=455,y=120)
+    '''
     tbn=Entry(root,width=30)
     tbn.place(x=455,y=150)
 
@@ -1032,7 +1060,7 @@ def akk():
 
     vbetry =Entry(root, width=30)
     vbetry.place(x=1192,y=100)
-    #end..............................
+    #end..............................'''
 
 
     #######################
@@ -1072,7 +1100,11 @@ def akk():
     ownquery.place(x=120,y=450)
     #end..............................
 
-   
+    # create database..................
+
+    credn =Button(root,text='CREATE DATABASE',font=('Open Sans',19,'bold'),bd=2,bg='red',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=cdb)
+    credn.place(x=450,y=230)
+    #end..............................
 
 
     # Run the main loop
@@ -1081,18 +1113,11 @@ def akk():
 
 
 
-password='yogi the don 1.555'
-
-akk()
 
 
 
 
-'''
-
-
-
-
+#password entry authentication
 
 
 def fn():
@@ -1141,4 +1166,3 @@ butt.pack(pady=10)
 
 
 sk.mainloop()
-'''
