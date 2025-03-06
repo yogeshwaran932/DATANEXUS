@@ -31,22 +31,34 @@ def akk():
             cdn = c.connect(host = 'localhost', user = 'root', passwd = password)
         except mysql.connector.Error as err:
             messagebox.showerror('ERROR',f'DATABASE CONNECTIVITY ISSUE {err}')
+            return
         
         if cdn:
             database_name = dbn.get()
-            try:
-                cur = cdn.cursor()
-                query = f'create database {database_name}'
-                cur.execute(query)
-                cdn.commit()
-                messagebox.showinfo('SUCCESS',f"THE DATABASE '{database_name}' HAS BEEN CREATED SUCCESSFULLY")
-            except mysql.connector.Error as err:
-                messagebox.showerror('ERROR',f'CANNOT CREATE DATABASE{err}')
-                
-            finally:
-                cur.close()
-                cdn.close()
-       
+            if database_name == '':
+                messagebox.showerror('ERROR','ENTRY FIELDS CANNOT BE EMPTY')
+                return
+            else:
+                    
+                if messagebox.askyesno('DATABASE',f"DO YOU WANT TO CREATE THE DATABASE '{database_name}'") > 0 :
+
+
+                    try:
+                        cur = cdn.cursor()
+                        query = f'create database {database_name}'
+                        cur.execute(query)
+                        cdn.commit()
+                        messagebox.showinfo('SUCCESS',f"THE DATABASE '{database_name}' HAS BEEN CREATED SUCCESSFULLY")
+                    except mysql.connector.Error as err:
+                        messagebox.showerror('ERROR',f'CANNOT CREATE DATABASE{err}')
+                        return
+                        
+                    finally:
+                        cur.close()
+                        cdn.close()
+                else:
+                    return
+            
     ##################################################################################################################################################################################################
     ##################################################################################################################################################################################################
     ##################################################################################################################################################################################################
@@ -769,39 +781,46 @@ def akk():
     #CANVAS'S
     ####################
 
-    color_for_text='magenta'
+    color_for_text='#000000'
 
 
 
 
 
     canvass = Canvas(root,width=1920,height=1079) 
-    background=ImageTk.PhotoImage(file='bg.jpg')
+    '''background=ImageTk.PhotoImage(file='bg.jpg')
     canvass.create_image(-50, -50, image=background, anchor="nw")
-    
+    '''
     
     #HEADINGS FOR ALL SECTION
 
-    canvass.create_text(230,39,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
-    canvass.pack()
+    # Common properties
+    font_style = ('Courier', 16, 'bold')
+    color_for_text = "black"
 
-    canvass.create_text(589,39,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
-    canvass.pack()
+    # Top section headings
+    canvass.create_text(230, 39, text="THIS SECTION IS FOR\nRETRIEVING ALL THE DATA\nFROM THE SELECTED TABLE",
+                        font=font_style, fill=color_for_text, anchor="center")
 
-    canvass.create_text(989,39,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
-    canvass.pack()
+    canvass.create_text(589, 39, text="THIS SECTION IS FOR\nRETRIEVING ALL THE DATA\nFROM THE SELECTED TABLE",
+                        font=font_style, fill=color_for_text, anchor="center")
 
+    canvass.create_text(989, 39, text="THIS SECTION IS FOR\nRETRIEVING ALL THE DATA\nFROM THE SELECTED TABLE",
+                        font=font_style, fill=color_for_text, anchor="center")
 
-    canvass.create_text(1350,39,text='  THIS SECTION IS FOR \nRETIRIVING ALL THE DATA \nFROM THE SELECTED TABLE',font=('Courier',16,'bold'),fill=color_for_text)
-    canvass.pack()
+    canvass.create_text(1350, 39, text="THIS SECTION IS FOR\nRETRIEVING ALL THE DATA\nFROM THE SELECTED TABLE",
+                        font=font_style, fill=color_for_text, anchor="center")
 
-    canvass.create_text(225,542,text='THIS SECTION IS FOR \n  CREATING A TABLE, \nCLICK ON CREATE TABLE',font=('Courier',16,'bold'),fill=color_for_text)
-    canvass.pack()
+    # Bottom section heading
+    canvass.create_text(225, 542, text="THIS SECTION IS FOR\nCREATING A TABLE,\nCLICK ON CREATE TABLE",
+                        font=font_style, fill=color_for_text, anchor="center")
+
+    canvass.pack(fill="both", expand=True)
 
 
     #MAIN WINDOWS'S LABLES
 
-    color_for_text1='yellow'
+    color_for_text1='black'
 
 
     canvass.create_text(220,112,text='SELECT DATABASE',font=('times',12,'bold'),fill=color_for_text1)
@@ -820,7 +839,7 @@ def akk():
     root.geometry(f"{screen_width}x{screen_height}")
 
     # Set the frame color
-    color = 'yellow'
+    color = 'gray'
 
     # Function to create vertical frames
     def create_vertical_frames(relative_x_positions, width_ratio=0.005, height_ratio=1):
@@ -1068,51 +1087,48 @@ def akk():
     #######################
 
     # retival button...................
-    allbutton =Button(root,text='SUBMIT',width=10,font=('Open Sans',19,'bold'),bd=2,bg='red',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=dbentry)
+    allbutton =Button(root,text='SUBMIT',width=10,font=('Open Sans',19,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=dbentry)
     allbutton.place(x=143,y=350)
 
     # end..............................
 
 
     #creation buttons..................
-    creatbutton=Button(root,text='CREATE TABLE',width=15,font=('Open Sans',15,'bold'),bd=2,bg='red',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=createable)
+    creatbutton=Button(root,text='CREATE TABLE',width=15,font=('Open Sans',15,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=createable)
     creatbutton.place(x=130,y=650)
 
     #end...............................
 
 
     #data insertion button.............
-    insertbutton=Button(root,text='INSERT DATA',width=15,font=('Open Sans',15,'bold'),bd=2,bg='red',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=create_main_window)
+    insertbutton=Button(root,text='INSERT DATA',width=15,font=('Open Sans',15,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=create_main_window)
     insertbutton.place(x=130,y=750)
 
     #end...............................
 
     
     #data altering button..............
-    alterbutton=Button(root,text='ALTER TABLE',width=15,font=('Open Sans',15,'bold'),bd=2,bg='red',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=ALTER)
+    alterbutton=Button(root,text='ALTER TABLE',width=15,font=('Open Sans',15,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=ALTER)
     alterbutton.place(x=480,y=650)
     #end...............................
 
 
 
     # own query button.................
-    ownquery=Button (root,text='WRITE YOUR OWN QUERY',font=('Open Sans',10,'bold'),bd=2,bg='red',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=update)
-    ownquery.place(x=120,y=450)
+    '''ownquery=Button (root,text='WRITE YOUR OWN QUERY',font=('Open Sans',10,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=update)
+    ownquery.place(x=120,y=450)'''
     #end..............................
 
     # create database..................
 
-    credn =Button(root,text='CREATE DATABASE',font=('Open Sans',19,'bold'),bd=2,bg='red',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=cdb)
+    credn =Button(root,text='CREATE DATABASE',font=('Open Sans',19,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=cdb)
     credn.place(x=450,y=230)
     #end..............................
 
 
+
     # Run the main loop
     root.mainloop()
-
-
-
-
 
 
 
@@ -1163,6 +1179,5 @@ passwd.pack()
 
 butt = Button(sk, text='SUBMIT', width=8, font=('Open Sans', 19, 'bold'), bd=2, bg='purple', cursor='hand2', fg='violetred', activeforeground='purple', activebackground='purple', command=fn)
 butt.pack(pady=10)
-
 
 sk.mainloop()
