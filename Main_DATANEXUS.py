@@ -1132,6 +1132,7 @@ def akk():
 
 
 
+pwd='yogesh'
 
 #password entry authentication
 
