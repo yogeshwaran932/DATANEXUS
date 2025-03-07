@@ -1130,12 +1130,10 @@ def akk():
 
 
 
-password='password'
-akk()
 
 #password entry authentication
 
-'''
+
 def fn():
     host1 = host.get()
     user1 = user.get()
@@ -1181,4 +1179,4 @@ butt = Button(sk, text='SUBMIT', width=8, font=('Open Sans', 19, 'bold'), bd=2, 
 butt.pack(pady=10)
 
 sk.mainloop()
-'''
+
