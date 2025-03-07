@@ -12,8 +12,6 @@ import tkinter as tk
 from tkinter import Label
 from PIL import ImageTk, Image
 from tkinter import *
-import random
-import os
 
 
 
@@ -32,7 +30,7 @@ def akk():
         except mysql.connector.Error as err:
             messagebox.showerror('ERROR',f'DATABASE CONNECTIVITY ISSUE {err}')
             return
-        
+
         if cdn:
             database_name = dbn.get()
             if database_name == '':
@@ -799,20 +797,20 @@ def akk():
     color_for_text = "black"
 
     # Top section headings
-    canvass.create_text(230, 39, text="THIS SECTION IS FOR\nRETRIEVING ALL THE DATA\nFROM THE SELECTED TABLE",
+    canvass.create_text(230, 39, text="RETRIVAL SECTION\n FOR A TABLE",
                         font=font_style, fill=color_for_text, anchor="center")
 
-    canvass.create_text(589, 39, text="THIS SECTION IS FOR\nRETRIEVING ALL THE DATA\nFROM THE SELECTED TABLE",
+    canvass.create_text(589, 39, text="DATABASES CREATION",
                         font=font_style, fill=color_for_text, anchor="center")
 
-    canvass.create_text(989, 39, text="THIS SECTION IS FOR\nRETRIEVING ALL THE DATA\nFROM THE SELECTED TABLE",
+    '''canvass.create_text(989, 39, text="THIS SECTION IS FOR\nRETRIEVING ALL THE DATA\nFROM THE SELECTED TABLE",
                         font=font_style, fill=color_for_text, anchor="center")
 
     canvass.create_text(1350, 39, text="THIS SECTION IS FOR\nRETRIEVING ALL THE DATA\nFROM THE SELECTED TABLE",
-                        font=font_style, fill=color_for_text, anchor="center")
+                        font=font_style, fill=color_for_text, anchor="center")'''
 
     # Bottom section heading
-    canvass.create_text(225, 542, text="THIS SECTION IS FOR\nCREATING A TABLE,\nCLICK ON CREATE TABLE",
+    canvass.create_text(225, 470, text="TABLE CREATION &\n DATA INSERTION",
                         font=font_style, fill=color_for_text, anchor="center")
 
     canvass.pack(fill="both", expand=True)
@@ -1048,12 +1046,12 @@ def akk():
     database_var = StringVar(root)
     database_dropdown = ttk.Combobox(root, textvariable=database_var)
     database_dropdown["values"] = get_databases()
-    database_dropdown.place(x=130,y=125)
+    database_dropdown.place(x=150,y=125)
 
 
     table_var = StringVar(root)
     table_dropdown = ttk.Combobox(root, textvariable=table_var, state='disabled')
-    table_dropdown.place(x=130,y=275)
+    table_dropdown.place(x=150,y=275)
     database_dropdown.bind("<<ComboboxSelected>>", on_database_select)
     
     #end ..............................
@@ -1066,7 +1064,7 @@ def akk():
 
     #not DESIDED entries...............
     dbn =Entry(root, width=30)
-    dbn.place(x=455,y=120)
+    dbn.place(x=490,y=120)
     '''
     tbn=Entry(root,width=30)
     tbn.place(x=455,y=150)
@@ -1095,21 +1093,21 @@ def akk():
 
     #creation buttons..................
     creatbutton=Button(root,text='CREATE TABLE',width=15,font=('Open Sans',15,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=createable)
-    creatbutton.place(x=130,y=650)
+    creatbutton.place(x=130,y=570)
 
     #end...............................
 
 
     #data insertion button.............
     insertbutton=Button(root,text='INSERT DATA',width=15,font=('Open Sans',15,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=create_main_window)
-    insertbutton.place(x=130,y=750)
+    insertbutton.place(x=130,y=670)
 
     #end...............................
 
     
     #data altering button..............
     alterbutton=Button(root,text='ALTER TABLE',width=15,font=('Open Sans',15,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=ALTER)
-    alterbutton.place(x=480,y=650)
+    alterbutton.place(x=480,y=570)
     #end...............................
 
 
@@ -1132,11 +1130,12 @@ def akk():
 
 
 
-pwd='yogesh'
+password='password'
+akk()
 
 #password entry authentication
 
-
+'''
 def fn():
     host1 = host.get()
     user1 = user.get()
@@ -1182,3 +1181,4 @@ butt = Button(sk, text='SUBMIT', width=8, font=('Open Sans', 19, 'bold'), bd=2, 
 butt.pack(pady=10)
 
 sk.mainloop()
+'''
