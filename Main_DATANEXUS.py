@@ -779,9 +779,6 @@ def akk():
     #CANVAS'S
     ####################
 
-    color_for_text='#000000'
-
-
 
 
 
@@ -789,7 +786,7 @@ def akk():
     '''background=ImageTk.PhotoImage(file='bg.jpg')
     canvass.create_image(-50, -50, image=background, anchor="nw")
     '''
-    
+
     #HEADINGS FOR ALL SECTION
 
     # Common properties
@@ -812,6 +809,9 @@ def akk():
     # Bottom section heading
     canvass.create_text(225, 470, text="TABLE CREATION &\n DATA INSERTION",
                         font=font_style, fill=color_for_text, anchor="center")
+
+    canvass.create_text(1165, 460, text="WILL BE UPDATED",
+                        font=('Courier', 40, 'bold'), fill='#999999', anchor="center")
 
     canvass.pack(fill="both", expand=True)
 
@@ -1130,9 +1130,7 @@ def akk():
 
 
 
-
 #password entry authentication
-
 
 def fn():
     host1 = host.get()
