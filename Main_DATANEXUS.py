@@ -19,6 +19,13 @@ from tkinter import *
 
 def akk():
     
+    def update():
+        
+        print()
+
+
+
+
     ##################################################################################################################################################################################################
     ##################################################################################################################################################################################################
     ##################################################################################################################################################################################################
@@ -951,7 +958,7 @@ def akk():
 
 
 
-    def update():
+    def updatee():
         def start_marquee(direction):
             x, y = canvas.coords(text_id)
             if direction == 'left':
@@ -1021,12 +1028,12 @@ def akk():
             tables = [row[0] for row in cursor.fetchall()]
             cursor.close()
             mydb.close()
+            
 
-            # Clear existing items in second dropdown
-            table_dropdown.set(' ')  # Clear the selection (works for most Tkinter versions)
+            table_dropdown.set(' ')  # Clear the selection 
+                
 
-            # Populate second dropdown with tables
-            table_dropdown['values'] = tables  # Use the 'values' property
+            table_dropdown['values'] = tables  
         else:
             messagebox.showerror('ERROR',"ERROR CONNECTING THE DATABSAE")
             return
@@ -1113,7 +1120,7 @@ def akk():
 
 
     # own query button.................
-    '''ownquery=Button (root,text='WRITE YOUR OWN QUERY',font=('Open Sans',10,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=update)
+    '''ownquery=Button (root,text='WRITE YOUR OWN QUERY',font=('Open Sans',10,'bold'),bd=2,bg='#0D6EFD',fg='white',cursor='hand2',activeforeground='purple',activebackground='purple',command=updatee)
     ownquery.place(x=120,y=450)'''
     #end..............................
 
@@ -1126,9 +1133,16 @@ def akk():
 
 
     # Run the main loop
+
+    
     root.mainloop()
+password = 'yogi the don 1.555'
+akk()
 
 
+
+
+'''
 
 #password entry authentication
 
@@ -1178,3 +1192,4 @@ butt.pack(pady=10)
 
 sk.mainloop()
 
+'''
